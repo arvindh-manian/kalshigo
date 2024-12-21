@@ -1,12 +1,11 @@
 package kalshigo
 
 import (
-	"bytes"
 	"fmt"
 	"testing"
 )
 
-func TestMakeRequest(t *testing.T) {
+func Test_makeRequest(t *testing.T) {
 	method := "GET"
 	path := "/trade-api/v2/portfolio/balance"
 
@@ -17,8 +16,7 @@ func TestMakeRequest(t *testing.T) {
 	}
 	defer response.Body.Close()
 
-	fmt.Println("Status Code:", response.StatusCode)
-	body := new(bytes.Buffer)
-	body.ReadFrom(response.Body)
-	fmt.Println("Response Body:", body.String())
+	if response.StatusCode != 200 {
+		t.Errorf("Expected status code 200, got %d", response.StatusCode)
+	}
 }
