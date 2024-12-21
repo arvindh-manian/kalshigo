@@ -42,6 +42,8 @@ func (c *Client) makeRequest(method string, path string, payload interface{}) (*
 	req.Header.Set("KALSHI-ACCESS-KEY", c.AccessKey)
 	req.Header.Set("KALSHI-ACCESS-SIGNATURE", signature)
 	req.Header.Set("KALSHI-ACCESS-TIMESTAMP", timestampStr)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
 
 	client := &http.Client{}
 	return client.Do(req)
