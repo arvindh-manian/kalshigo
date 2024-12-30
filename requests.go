@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"net/http"
+	"net/url"
 	"strconv"
 	"time"
 )
@@ -12,7 +13,16 @@ func (c *Client) makeRequest(method string, path string, payload interface{}) (*
 	timestamp := time.Now().UnixNano() / int64(time.Millisecond)
 	timestampStr := strconv.FormatInt(timestamp, 10)
 
-	msgString := timestampStr + method + path
+	// get url without query params
+	parsedUrl, err := url.Parse(path)
+
+	if err != nil {
+		return nil, err
+	}
+
+	noParamsPath := parsedUrl.Path
+
+	msgString := timestampStr + method + noParamsPath
 
 	signature, err := signPSS(c.PrivateKey, msgString)
 	if err != nil {

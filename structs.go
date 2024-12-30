@@ -24,6 +24,31 @@ type GetMarketParams struct {
 	MarketTicker string `json:"market_ticker"`
 }
 
+type GetMarketsParams struct {
+	Limit         int64        `json:"limit,omitempty"` // This should be within the range of 1-1000
+	Cursor        string       `json:"cursor,omitempty"`
+	EventTicker   string       `json:"event_ticker,omitempty"`
+	SeriesTicker  string       `json:"series_ticker,omitempty"`
+	MaxCloseTs    int64        `json:"max_close_ts,omitempty"`
+	MinCloseTs    int64        `json:"min_close_ts,omitempty"`
+	Status        MarketStatus `json:"status,omitempty"`
+	MarketTickers []string     `json:"tickers,omitempty"`
+}
+
+type MarketsResponse struct {
+	Markets []Market `json:"markets"`
+	Cursor  string   `json:"cursor,omitempty"`
+}
+
+type MarketStatus string
+
+const (
+	MarketStatusOpen     MarketStatus = "open"
+	MarketStatusClosed   MarketStatus = "closed"
+	MarketStatusSettled  MarketStatus = "settled"
+	MarketStatusUnopened MarketStatus = "unopened"
+)
+
 type MarketType string
 
 const (
@@ -95,7 +120,7 @@ type Market struct {
 	RulesSecondary          string            `json:"rules_secondary"`
 	SettlementTimerSeconds  int32             `json:"settlement_timer_seconds"`
 	SettlementValue         int64             `json:"settlement_value,omitempty"`
-	Status                  string            `json:"status"` // TODO: Type this
+	Status                  MarketStatus      `json:"status"`
 	StrikeType              MarketStrikeType  `json:"strike_type,omitempty"`
 	SubTitle                string            `json:"subtitle"` // Deprecated
 	TickSize                int64             `json:"tick_size"`

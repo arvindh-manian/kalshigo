@@ -19,7 +19,9 @@ func TestGetSeries(t *testing.T) {
 }
 
 func TestGetMarket(t *testing.T) {
-	m, err := kg.GetMarket("KXSBADS-25-B")
+	m, err := kg.GetMarket(&GetMarketParams{
+		MarketTicker: "KXSBADS-25-B",
+	})
 
 	if err != nil {
 		t.Errorf("Error getting market: %v", err)
@@ -27,5 +29,23 @@ func TestGetMarket(t *testing.T) {
 
 	if m.Ticker != "KXSBADS-25-B" {
 		t.Errorf("Expected ticker to be KXSBADS-25-B, got %v", m.Ticker)
+	}
+}
+
+func TestGetMarkets(t *testing.T) {
+	m, err := kg.GetMarkets(&GetMarketsParams{
+		Limit: 10,
+	})
+
+	if err != nil {
+		t.Errorf("Error getting markets: %v", err)
+	}
+
+	if len(m.Markets) != 10 {
+		t.Errorf("Expected 10 markets, got %v", len(m.Markets))
+	}
+
+	if m.Cursor == "" {
+		t.Errorf("Expected cursor to be non-empty, got %v", m.Cursor)
 	}
 }
