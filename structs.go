@@ -1,7 +1,6 @@
 package kalshigo
 
 import (
-	"encoding/json"
 	"time"
 )
 
@@ -136,61 +135,6 @@ type Market struct {
 // JSON marshalling for Market
 type MarketResponse struct {
 	Market Market `json:"market"`
-}
-
-func (m *Market) UnmarshalJSON(data []byte) error {
-	type Alias Market
-	aux := &struct {
-		*Alias
-		CloseTime               string `json:"close_time"`
-		ExpectedExpirationTime  string `json:"expected_expiration_time"`
-		ExpirationTime          string `json:"expiration_time"`
-		FeeWaiverExpirationTime string `json:"fee_waiver_expiration_time"`
-		LatestExpirationTime    string `json:"latest_expiration_time"`
-		OpenTime                string `json:"open_time"`
-	}{Alias: (*Alias)(m)}
-
-	if err := json.Unmarshal(data, &aux); err != nil {
-		return err
-	}
-
-	var err error
-
-	m.CloseTime, err = time.Parse(time.RFC3339, aux.CloseTime)
-	if err != nil {
-		return err
-	}
-
-	if aux.ExpectedExpirationTime != "" {
-		m.ExpectedExpirationTime, err = time.Parse(time.RFC3339, aux.ExpectedExpirationTime)
-		if err != nil {
-			return err
-		}
-	}
-
-	m.ExpirationTime, err = time.Parse(time.RFC3339, aux.ExpirationTime)
-	if err != nil {
-		return err
-	}
-
-	if aux.FeeWaiverExpirationTime != "" {
-		m.FeeWaiverExpirationTime, err = time.Parse(time.RFC3339, aux.FeeWaiverExpirationTime)
-		if err != nil {
-			return err
-		}
-	}
-
-	m.LatestExpirationTime, err = time.Parse(time.RFC3339, aux.LatestExpirationTime)
-	if err != nil {
-		return err
-	}
-
-	m.OpenTime, err = time.Parse(time.RFC3339, aux.OpenTime)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 type SeriesCategory string
