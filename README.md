@@ -11,3 +11,14 @@ KalshiGo is a Go package providing low-level bindings to the Kalshi API. Inspire
 | collection   | ❌             |
 | portfolio    | ❌             |
 | sockets      | ❌             |
+
+# TODO:
+- Add features (first priority)
+
+- Add context support
+
+- Add godoc comments
+
+- Add cleaner logging
+
+- Deduplicate code
