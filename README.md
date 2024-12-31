@@ -5,7 +5,7 @@ KalshiGo is a Go package providing low-level bindings to the Kalshi API. Inspire
 ## Status
 | Section      | Support Status |
 | ------------ | -------------- |
-| market       | 🔨             |
+| market       | ✅             |
 | exchange     | ❌             |
 | auth         | ❌             |
 | collection   | ❌             |
