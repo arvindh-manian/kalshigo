@@ -2,19 +2,29 @@ package kalshigo
 
 import (
 	"crypto/rsa"
+	"net/http"
+	"net/url"
 )
 
 type Client struct {
 	PrivateKey *rsa.PrivateKey
 	AccessKey  string
-	BaseURL    string
+	BaseURL    url.URL
+	httpClient *http.Client
 }
 
 func New(privateKey *rsa.PrivateKey, accessKey string, baseURL string) *Client {
+	parsedUrl, err := url.Parse(baseURL)
+
+	if err != nil {
+		panic(err)
+	}
+
 	return &Client{
 		PrivateKey: privateKey,
 		AccessKey:  accessKey,
-		BaseURL:    baseURL,
+		BaseURL:    *parsedUrl,
+		httpClient: &http.Client{},
 	}
 }
 

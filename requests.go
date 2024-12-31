@@ -3,46 +3,69 @@ package kalshigo
 import (
 	"bytes"
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/url"
 	"strconv"
 	"time"
 )
 
-func (c *Client) makeRequest(method string, path string, payload interface{}) (*http.Response, error) {
-	timestamp := time.Now().UnixNano() / int64(time.Millisecond)
-	timestampStr := strconv.FormatInt(timestamp, 10)
+func (c *Client) getRequest(path string, query url.Values) (body []byte, statusCode int, err error) {
+	fullUrl := c.BaseURL.JoinPath(path)
 
-	// get url without query params
-	parsedUrl, err := url.Parse(path)
-
-	if err != nil {
-		return nil, err
+	if query != nil {
+		fullUrl.RawQuery = query.Encode()
 	}
 
-	noParamsPath := parsedUrl.Path
+	resp, err := c.makeRequest("GET", fullUrl, nil)
 
-	msgString := timestampStr + method + noParamsPath
+	if err != nil {
+		return nil, resp.StatusCode, err
+	}
+
+	if resp.StatusCode != 200 {
+		return nil, resp.StatusCode, &APIError{
+			StatusCode: resp.StatusCode,
+		}
+	}
+
+	defer resp.Body.Close()
+
+	body, err = io.ReadAll(resp.Body)
+
+	if err != nil {
+		return nil, resp.StatusCode, err
+	}
+
+	return body, resp.StatusCode, nil
+}
+
+// this should only be used by internal functions
+// the base URL is added in other functions
+func (c *Client) makeRequest(method string, requestUrl *url.URL, payload interface{}) (*http.Response, error) {
+	timestampString := strconv.FormatInt(time.Now().UnixNano()/int64(time.Millisecond), 10)
+
+	msgString := timestampString + method + "/" + requestUrl.Path
 
 	signature, err := signPSS(c.PrivateKey, msgString)
+
 	if err != nil {
 		return nil, err
 	}
 
 	var req *http.Request
 
-	if payload == nil {
-		req, err = http.NewRequest(method, c.BaseURL+path, nil)
-	} else {
+	if payload != nil {
 		var payloadBytes []byte
-
 		payloadBytes, err = json.Marshal(payload)
 
 		if err != nil {
 			return nil, err
 		}
 
-		req, err = http.NewRequest(method, c.BaseURL+path, bytes.NewBuffer(payloadBytes))
+		req, err = http.NewRequest(method, requestUrl.String(), bytes.NewBuffer(payloadBytes))
+	} else {
+		req, err = http.NewRequest(method, requestUrl.String(), nil)
 	}
 
 	if err != nil {
@@ -51,10 +74,10 @@ func (c *Client) makeRequest(method string, path string, payload interface{}) (*
 
 	req.Header.Set("KALSHI-ACCESS-KEY", c.AccessKey)
 	req.Header.Set("KALSHI-ACCESS-SIGNATURE", signature)
-	req.Header.Set("KALSHI-ACCESS-TIMESTAMP", timestampStr)
+	req.Header.Set("KALSHI-ACCESS-TIMESTAMP", timestampString)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
 
-	client := &http.Client{}
-	return client.Do(req)
+	return c.httpClient.Do(req)
+
 }
