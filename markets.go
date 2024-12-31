@@ -213,3 +213,70 @@ func (c *Client) GetEvent(params *GetEventParams) (Event, error) {
 
 	return returnEvent.Event, nil
 }
+
+func (c *Client) GetEvents(params *GetEventsParams) (GetEventsResponse, error) {
+	EVENT_PATH := "/trade-api/v2/events"
+	parsedUrl, err := url.Parse(EVENT_PATH)
+
+	if err != nil {
+		return GetEventsResponse{}, err
+	}
+
+	// query params from GetEventParams
+	q := parsedUrl.Query()
+
+	if params != nil {
+		if params.Limit != 0 {
+			q.Set("limit", strconv.FormatInt(params.Limit, 10))
+		}
+
+		if params.Cursor != "" {
+			q.Set("cursor", params.Cursor)
+		}
+
+		if params.SeriesTicker != "" {
+			q.Set("series_ticker", params.SeriesTicker)
+		}
+
+		if params.Status != "" {
+			q.Set("status", string(params.Status))
+		}
+
+		if params.WithNestedMarkets {
+			q.Set("with_nested_markets", "true")
+		}
+	}
+
+	parsedUrl.RawQuery = q.Encode()
+
+	resp, err := c.makeRequest("GET", parsedUrl.String(), nil)
+
+	if err != nil {
+		return GetEventsResponse{}, err
+	}
+
+	defer resp.Body.Close()
+
+	s, err := io.ReadAll(resp.Body)
+
+	if resp.StatusCode != 200 {
+		return GetEventsResponse{}, &APIError{
+			StatusCode: resp.StatusCode,
+			Body:       string(s),
+		}
+	}
+
+	if err != nil {
+		return GetEventsResponse{}, err
+	}
+
+	var returnEvents GetEventsResponse
+
+	err = json.Unmarshal(s, &returnEvents)
+
+	if err != nil {
+		return GetEventsResponse{}, err
+	}
+
+	return returnEvents, nil
+}

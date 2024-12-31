@@ -64,3 +64,21 @@ func TestGetEvent(t *testing.T) {
 		t.Errorf("Expected ticker to be KXSPEAKER, got %v", e.EventTicker)
 	}
 }
+
+func TestGetEvents(t *testing.T) {
+	e, err := kg.GetEvents(&GetEventsParams{
+		Limit: 10,
+	})
+
+	if err != nil {
+		t.Errorf("Error getting events: %v", err)
+	}
+
+	if len(e.Events) != 10 {
+		t.Errorf("Expected 10 events, got %v", len(e.Events))
+	}
+
+	if e.Cursor == "" {
+		t.Errorf("Expected cursor to be non-empty, got %v", e.Cursor)
+	}
+}

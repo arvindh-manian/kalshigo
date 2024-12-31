@@ -191,3 +191,18 @@ type GetEventParams struct {
 	EventTicker       string `json:"event_ticker"`
 	WithNestedMarkets bool   `json:"with_nested_markets"`
 }
+
+type GetEventsParams struct {
+	// This should be within the range of 1-200
+	Limit int64 `json:"limit,omitempty"`
+	// omit to get the first page
+	Cursor            string       `json:"cursor,omitempty"`
+	Status            MarketStatus `json:"status,omitempty"`
+	SeriesTicker      string       `json:"series_ticker,omitempty"`
+	WithNestedMarkets bool         `json:"with_nested_markets"`
+}
+
+type GetEventsResponse struct {
+	Cursor string  `json:"cursor,omitempty"`
+	Events []Event `json:"events"`
+}
