@@ -1,6 +1,7 @@
 package kalshigo
 
 import (
+	"encoding/json"
 	"time"
 )
 
@@ -123,7 +124,7 @@ type Market struct {
 	StrikeType              MarketStrikeType  `json:"strike_type,omitempty"`
 	SubTitle                string            `json:"subtitle"` // Deprecated
 	TickSize                int64             `json:"tick_size"`
-	Ticker                  string            `json:"ticker"`
+	MarketTicker            string            `json:"ticker"`
 	Title                   string            `json:"title"`
 	Volume                  int64             `json:"volume"`
 	Volume24h               int64             `json:"volume_24h"`
@@ -163,7 +164,7 @@ type Series struct {
 	Frequency         string             `json:"frequency"`
 	SettlementSources []SettlementSource `json:"settlement_sources"`
 	Tags              []string           `json:"tags"`
-	Ticker            string             `json:"ticker"`
+	SeriesTicker      string             `json:"ticker"`
 	Title             string             `json:"title"`
 }
 
@@ -237,4 +238,49 @@ type Trade struct {
 type GetTradesResponse struct {
 	Cursor string  `json:"cursor,omitempty"`
 	Trades []Trade `json:"trades"`
+}
+
+type GetMarketOrderbookParams struct {
+	MarketTicker string `json:"ticker"`
+	// maximum number of orderbook price levels you want to see for either side
+	Depth int32 `json:"depth,omitempty"`
+}
+
+type GetMarketOrderbookResponse struct {
+	Orderbook MarketOrderbook `json:"orderbook"`
+}
+
+type MarketOrderbook struct {
+	No  PriceToFreq `json:"no"`
+	Yes PriceToFreq `json:"yes"`
+}
+
+// cent to number of pending resting orders
+type PriceToFreq map[int]int
+
+func (p *PriceToFreq) UnmarshalJSON(b []byte) error {
+	var arr = make([][]int, 0)
+	err := json.Unmarshal(b, &arr)
+
+	if err != nil {
+		return err
+	}
+
+	*p = make(map[int]int)
+
+	for _, pair := range arr {
+		(*p)[pair[0]] = pair[1]
+	}
+
+	return nil
+}
+
+func (p PriceToFreq) MarshalJSON() ([]byte, error) {
+	arr := make([][]int, 0)
+
+	for k, v := range p {
+		arr = append(arr, []int{k, v})
+	}
+
+	return json.Marshal(arr)
 }

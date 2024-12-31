@@ -237,3 +237,35 @@ func (c *Client) GetTrades(params *GetTradesParams) (GetTradesResponse, error) {
 
 	return returnTrades, nil
 }
+
+func (c *Client) GetMarketOrderbook(params *GetMarketOrderbookParams) (MarketOrderbook, error) {
+	parsedUrl, err := url.Parse(MARKET_PATH)
+
+	if err != nil {
+		return MarketOrderbook{}, err
+	}
+
+	parsedUrl = parsedUrl.JoinPath(strings.ToUpper(params.MarketTicker), "orderbook")
+
+	q := url.Values{}
+
+	if params.Depth != 0 {
+		q.Set("depth", strconv.FormatInt(int64(params.Depth), 10))
+	}
+
+	body, _, err := c.getRequest(parsedUrl.String(), q)
+
+	if err != nil {
+		return MarketOrderbook{}, err
+	}
+
+	var returnOrderbook GetMarketOrderbookResponse
+
+	err = json.Unmarshal(body, &returnOrderbook)
+
+	if err != nil {
+		return MarketOrderbook{}, err
+	}
+
+	return returnOrderbook.Orderbook, nil
+}
