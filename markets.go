@@ -67,6 +67,7 @@ func (c *Client) GetMarkets(params *GetMarketsParams) (MarketsResponse, error) {
 	q := url.Values{}
 
 	if params != nil {
+		// TODO: Consider using some kind of reflection to autogenerate the map from the JSON encoding rules
 		if params.Limit != 0 {
 			q.Set("limit", strconv.FormatInt(params.Limit, 10))
 		}
