@@ -27,7 +27,7 @@ func (c *Client) GetSeries(params *GetSeriesParams) (Series, error) {
 		return Series{}, err
 	}
 
-	var returnSeries SeriesResponse
+	var returnSeries GetSeriesResponse
 
 	err = json.Unmarshal(body, &returnSeries)
 
@@ -52,7 +52,7 @@ func (c *Client) GetMarket(params *GetMarketParams) (Market, error) {
 		return Market{}, err
 	}
 
-	var returnMarket MarketResponse
+	var returnMarket GetMarketResponse
 
 	err = json.Unmarshal(body, &returnMarket)
 
@@ -63,7 +63,7 @@ func (c *Client) GetMarket(params *GetMarketParams) (Market, error) {
 	return returnMarket.Market, nil
 }
 
-func (c *Client) GetMarkets(params *GetMarketsParams) (MarketsResponse, error) {
+func (c *Client) GetMarkets(params *GetMarketsParams) (GetMarketsResponse, error) {
 	q := url.Values{}
 
 	if params != nil {
@@ -104,15 +104,15 @@ func (c *Client) GetMarkets(params *GetMarketsParams) (MarketsResponse, error) {
 	body, _, err := c.getRequest(MARKET_PATH, q)
 
 	if err != nil {
-		return MarketsResponse{}, err
+		return GetMarketsResponse{}, err
 	}
 
-	var returnMarkets MarketsResponse
+	var returnMarkets GetMarketsResponse
 
 	err = json.Unmarshal(body, &returnMarkets)
 
 	if err != nil {
-		return MarketsResponse{}, err
+		return GetMarketsResponse{}, err
 	}
 
 	return returnMarkets, nil
@@ -141,7 +141,7 @@ func (c *Client) GetEvent(params *GetEventParams) (Event, error) {
 		return Event{}, err
 	}
 
-	var returnEvent EventResponse
+	var returnEvent GetEventResponse
 
 	err = json.Unmarshal(body, &returnEvent)
 

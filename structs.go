@@ -34,7 +34,7 @@ type GetMarketsParams struct {
 	MarketTickers []string     `json:"tickers,omitempty"`
 }
 
-type MarketsResponse struct {
+type GetMarketsResponse struct {
 	Markets []Market `json:"markets"`
 	Cursor  string   `json:"cursor,omitempty"`
 }
@@ -133,7 +133,7 @@ type Market struct {
 }
 
 // JSON marshalling for Market
-type MarketResponse struct {
+type GetMarketResponse struct {
 	Market Market `json:"market"`
 }
 
@@ -153,7 +153,7 @@ type SettlementSource struct {
 	Url  string `json:"url"`
 }
 
-type SeriesResponse struct {
+type GetSeriesResponse struct {
 	Series Series `json:"series"`
 }
 
@@ -181,7 +181,7 @@ type Event struct {
 	Title                string    `json:"title"`
 }
 
-type EventResponse struct {
+type GetEventResponse struct {
 	Event Event `json:"event"`
 	// deprecated
 	Markets []Market `json:"markets,omitempty"`
