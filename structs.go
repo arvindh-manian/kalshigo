@@ -206,3 +206,35 @@ type GetEventsResponse struct {
 	Cursor string  `json:"cursor,omitempty"`
 	Events []Event `json:"events"`
 }
+
+type GetTradesParams struct {
+	Cursor string `json:"cursor,omitempty"`
+	// This should be within the range of 1-1000
+	Limit        int32  `json:"limit,omitempty"`
+	MarketTicker string `json:"ticker,omitempty"`
+	MinTimestamp int64  `json:"min_ts,omitempty"`
+	MaxTimestamp int64  `json:"max_ts,omitempty"`
+}
+
+type TakerSideType string
+
+const (
+	TakerSideYes   TakerSideType = "yes"
+	TakerSideNo    TakerSideType = "no"
+	TakerSideUnset TakerSideType = ""
+)
+
+type Trade struct {
+	Count        int32         `json:"count"`
+	CreatedTime  time.Time     `json:"created_time"`
+	NoPrice      int64         `json:"no_price"`
+	TakerSide    TakerSideType `json:"taker_side"`
+	MarketTicker string        `json:"ticker"`
+	TradeID      string        `json:"trade_id"`
+	YesPrice     int64         `json:"yes_price"`
+}
+
+type GetTradesResponse struct {
+	Cursor string  `json:"cursor,omitempty"`
+	Trades []Trade `json:"trades"`
+}

@@ -82,3 +82,21 @@ func TestGetEvents(t *testing.T) {
 		t.Errorf("Expected cursor to be non-empty, got %v", e.Cursor)
 	}
 }
+
+func TestGetTrades(t *testing.T) {
+	tt, err := kg.GetTrades(&GetTradesParams{
+		Limit: 10,
+	})
+
+	if err != nil {
+		t.Errorf("Error getting trades: %v", err)
+	}
+
+	if len(tt.Trades) != 10 {
+		t.Errorf("Expected 10 trades, got %v", len(tt.Trades))
+	}
+
+	if tt.Cursor == "" {
+		t.Errorf("Expected cursor to be non-empty, got %v", tt.Cursor)
+	}
+}

@@ -13,6 +13,8 @@ const SERIES_PATH = "/trade-api/v2/series"
 
 const EVENT_PATH = "/trade-api/v2/events"
 
+const TRADE_PATH = "trade-api/v2/markets/trades"
+
 func (c *Client) GetSeries(params *GetSeriesParams) (Series, error) {
 	parsedUrl, err := url.Parse(SERIES_PATH)
 	if err != nil {
@@ -192,4 +194,46 @@ func (c *Client) GetEvents(params *GetEventsParams) (GetEventsResponse, error) {
 	}
 
 	return returnEvents, nil
+}
+
+func (c *Client) GetTrades(params *GetTradesParams) (GetTradesResponse, error) {
+	q := url.Values{}
+
+	if params != nil {
+		if params.Limit != 0 {
+			q.Set("limit", strconv.FormatInt(int64(params.Limit), 10))
+		}
+
+		if params.Cursor != "" {
+			q.Set("cursor", params.Cursor)
+		}
+
+		if params.MarketTicker != "" {
+			q.Set("ticker", params.MarketTicker)
+		}
+
+		if params.MinTimestamp != 0 {
+			q.Set("min_ts", strconv.FormatInt(params.MinTimestamp, 10))
+		}
+
+		if params.MaxTimestamp != 0 {
+			q.Set("max_ts", strconv.FormatInt(params.MaxTimestamp, 10))
+		}
+	}
+
+	body, _, err := c.getRequest(TRADE_PATH, q)
+
+	if err != nil {
+		return GetTradesResponse{}, err
+	}
+
+	var returnTrades GetTradesResponse
+
+	err = json.Unmarshal(body, &returnTrades)
+
+	if err != nil {
+		return GetTradesResponse{}, err
+	}
+
+	return returnTrades, nil
 }

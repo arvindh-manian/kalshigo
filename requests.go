@@ -3,6 +3,7 @@ package kalshigo
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -26,6 +27,7 @@ func (c *Client) getRequest(path string, query url.Values) (body []byte, statusC
 	if resp.StatusCode != 200 {
 		return nil, resp.StatusCode, &APIError{
 			StatusCode: resp.StatusCode,
+			Body:       fmt.Sprintf("Error getting %s: %s", path, resp.Status),
 		}
 	}
 
