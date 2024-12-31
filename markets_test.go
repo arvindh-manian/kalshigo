@@ -2,6 +2,7 @@ package kalshigo
 
 import (
 	"testing"
+	"time"
 )
 
 func TestGetSeries(t *testing.T) {
@@ -108,5 +109,26 @@ func TestGetMarketOrderbook(t *testing.T) {
 
 	if err != nil {
 		t.Errorf("Error getting market orderbook: %v", err)
+	}
+}
+
+func TestGetMarketCandlesticks(t *testing.T) {
+	startUnix := 1735187897
+	endUnix := 1735619897
+
+	c, err := kg.GetMarketCandlesticks(&GetMarketCandlesticksParams{
+		MarketTicker:   "KXUSTR-26DEC31-JG",
+		SeriesTicker:   "KXUSTR",
+		StartTimestamp: Timestamp{time.Unix(int64(startUnix), 0)},
+		EndTimestamp:   Timestamp{time.Unix(int64(endUnix), 0)},
+		PeriodInterval: PeriodIntervalHour,
+	})
+
+	if err != nil {
+		t.Errorf("Error getting market candlesticks: %v", err)
+	}
+
+	if len(c) == 0 {
+		t.Errorf("Expected non-empty candlesticks, got %v", len(c))
 	}
 }

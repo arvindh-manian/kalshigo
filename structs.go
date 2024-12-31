@@ -14,6 +14,27 @@ func (e *APIError) Error() string {
 	return e.Body
 }
 
+type Timestamp struct {
+	time.Time
+}
+
+func (t *Timestamp) UnmarshalJSON(b []byte) error {
+	var timestamp int64
+	err := json.Unmarshal(b, &timestamp)
+
+	if err != nil {
+		return err
+	}
+
+	t.Time = time.Unix(timestamp, 0)
+
+	return nil
+}
+
+func (t Timestamp) MarshalJSON() ([]byte, error) {
+	return json.Marshal(t.Unix())
+}
+
 type GetSeriesParams struct {
 	// SeriesTicker is the ticker of the series. This is a required field.
 	SeriesTicker string `json:"series_ticker"`
@@ -25,14 +46,14 @@ type GetMarketParams struct {
 }
 
 type GetMarketsParams struct {
-	Limit         int64        `json:"limit,omitempty"` // This should be within the range of 1-1000
-	Cursor        string       `json:"cursor,omitempty"`
-	EventTicker   string       `json:"event_ticker,omitempty"`
-	SeriesTicker  string       `json:"series_ticker,omitempty"`
-	MaxCloseTs    int64        `json:"max_close_ts,omitempty"`
-	MinCloseTs    int64        `json:"min_close_ts,omitempty"`
-	Status        MarketStatus `json:"status,omitempty"`
-	MarketTickers []string     `json:"tickers,omitempty"`
+	Limit             int64        `json:"limit,omitempty"` // This should be within the range of 1-1000
+	Cursor            string       `json:"cursor,omitempty"`
+	EventTicker       string       `json:"event_ticker,omitempty"`
+	SeriesTicker      string       `json:"series_ticker,omitempty"`
+	MaxCloseTimestamp Timestamp    `json:"max_close_ts,omitempty"`
+	MinCloseTimestamp Timestamp    `json:"min_close_ts,omitempty"`
+	Status            MarketStatus `json:"status,omitempty"`
+	MarketTickers     []string     `json:"tickers,omitempty"`
 }
 
 type GetMarketsResponse struct {
@@ -211,10 +232,10 @@ type GetEventsResponse struct {
 type GetTradesParams struct {
 	Cursor string `json:"cursor,omitempty"`
 	// This should be within the range of 1-1000
-	Limit        int32  `json:"limit,omitempty"`
-	MarketTicker string `json:"ticker,omitempty"`
-	MinTimestamp int64  `json:"min_ts,omitempty"`
-	MaxTimestamp int64  `json:"max_ts,omitempty"`
+	Limit        int32     `json:"limit,omitempty"`
+	MarketTicker string    `json:"ticker,omitempty"`
+	MinTimestamp Timestamp `json:"min_ts,omitempty"`
+	MaxTimestamp Timestamp `json:"max_ts,omitempty"`
 }
 
 type TakerSideType string
@@ -283,4 +304,59 @@ func (p PriceToFreq) MarshalJSON() ([]byte, error) {
 	}
 
 	return json.Marshal(arr)
+}
+
+type PeriodIntervalType int32
+
+const (
+	PeriodIntervalMinute PeriodIntervalType = 1
+	PeriodIntervalHour   PeriodIntervalType = 60
+	PeriodIntervalDay    PeriodIntervalType = 60 * 24
+)
+
+type GetMarketCandlesticksParams struct {
+	MarketTicker   string    `json:"ticker"`
+	SeriesTicker   string    `json:"series_ticker"`
+	StartTimestamp Timestamp `json:"start_ts"`
+	// Must be within 5000 period_intervals of the start_ts
+	EndTimestamp   Timestamp          `json:"end_ts"`
+	PeriodInterval PeriodIntervalType `json:"period_interval"`
+}
+
+type CandlestickPrice struct {
+	Close    int64 `json:"close,omitempty"`
+	High     int64 `json:"high,omitempty"`
+	Low      int64 `json:"low,omitempty"`
+	Mean     int64 `json:"mean,omitempty"`
+	Open     int64 `json:"open,omitempty"`
+	Previous int64 `json:"previous,omitempty"`
+}
+
+type CandlestickYesAsk struct {
+	Close int64 `json:"close"`
+	High  int64 `json:"high"`
+	Low   int64 `json:"low"`
+	Open  int64 `json:"open"`
+}
+
+type CandlestickYesBid struct {
+	Close int64 `json:"close"`
+	High  int64 `json:"high"`
+	Low   int64 `json:"low"`
+	Open  int64 `json:"open"`
+}
+
+type MarketCandlestick struct {
+	// Inclusive end of the period
+	EndPeriodTimestamp Timestamp         `json:"end_period_ts"`
+	OpenInterest       int64             `json:"open_interest"`
+	Price              CandlestickPrice  `json:"price"`
+	Volume             int64             `json:"volume"`
+	YesAsk             CandlestickYesAsk `json:"yes_ask"`
+	YesBid             CandlestickYesBid `json:"yes_bid"`
+}
+
+type GetMarketCandlesticksResponse struct {
+	Candlesticks []MarketCandlestick `json:"candlesticks"`
+	MarketTicker string              `json:"ticker"`
 }

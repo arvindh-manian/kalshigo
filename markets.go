@@ -86,12 +86,12 @@ func (c *Client) GetMarkets(params *GetMarketsParams) (GetMarketsResponse, error
 			q.Set("series_ticker", params.SeriesTicker)
 		}
 
-		if params.MaxCloseTs != 0 {
-			q.Set("max_close_ts", strconv.FormatInt(params.MaxCloseTs, 10))
+		if !params.MaxCloseTimestamp.IsZero() {
+			q.Set("max_close_ts", strconv.FormatInt(params.MaxCloseTimestamp.Unix(), 10))
 		}
 
-		if params.MinCloseTs != 0 {
-			q.Set("min_close_ts", strconv.FormatInt(params.MinCloseTs, 10))
+		if !params.MinCloseTimestamp.IsZero() {
+			q.Set("min_close_ts", strconv.FormatInt(params.MinCloseTimestamp.Unix(), 10))
 		}
 
 		if params.Status != "" {
@@ -212,12 +212,12 @@ func (c *Client) GetTrades(params *GetTradesParams) (GetTradesResponse, error) {
 			q.Set("ticker", params.MarketTicker)
 		}
 
-		if params.MinTimestamp != 0 {
-			q.Set("min_ts", strconv.FormatInt(params.MinTimestamp, 10))
+		if !params.MinTimestamp.IsZero() {
+			q.Set("min_ts", strconv.FormatInt(params.MinTimestamp.Unix(), 10))
 		}
 
-		if params.MaxTimestamp != 0 {
-			q.Set("max_ts", strconv.FormatInt(params.MaxTimestamp, 10))
+		if !params.MaxTimestamp.IsZero() {
+			q.Set("max_ts", strconv.FormatInt(params.MaxTimestamp.Unix(), 10))
 		}
 	}
 
@@ -268,4 +268,44 @@ func (c *Client) GetMarketOrderbook(params *GetMarketOrderbookParams) (MarketOrd
 	}
 
 	return returnOrderbook.Orderbook, nil
+}
+
+func (c *Client) GetMarketCandlesticks(params *GetMarketCandlesticksParams) ([]MarketCandlestick, error) {
+	parsedUrl, err := url.Parse(SERIES_PATH)
+
+	if err != nil {
+		return nil, err
+	}
+
+	parsedUrl = parsedUrl.JoinPath(strings.ToUpper(params.SeriesTicker), "markets", strings.ToUpper(params.MarketTicker), "candlesticks")
+
+	q := url.Values{}
+
+	if !params.StartTimestamp.IsZero() {
+		q.Set("start_ts", strconv.FormatInt(params.StartTimestamp.Unix(), 10))
+	}
+
+	if !params.EndTimestamp.IsZero() {
+		q.Set("end_ts", strconv.FormatInt(params.EndTimestamp.Unix(), 10))
+	}
+
+	if params.PeriodInterval != 0 {
+		q.Set("period_interval", strconv.FormatInt(int64(params.PeriodInterval), 10))
+	}
+
+	body, _, err := c.getRequest(parsedUrl.String(), q)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var returnCandlesticks GetMarketCandlesticksResponse
+
+	err = json.Unmarshal(body, &returnCandlesticks)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return returnCandlesticks.Candlesticks, nil
 }
