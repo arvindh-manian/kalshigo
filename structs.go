@@ -166,3 +166,28 @@ type Series struct {
 	Ticker            string             `json:"ticker"`
 	Title             string             `json:"title"`
 }
+
+type Event struct {
+	// deprecated
+	Category             string    `json:"category"`
+	CollateralReturnType string    `json:"collateral_return_type"`
+	EventTicker          string    `json:"event_ticker"`
+	Markets              []Market  `json:"markets,omitempty"`
+	MutuallyExclusive    bool      `json:"mutually_exclusive"`
+	SeriesTicker         string    `json:"series_ticker"`
+	StrikeDate           time.Time `json:"strike_date,omitempty"`
+	StrikePeriod         string    `json:"strike_period,omitempty"`
+	SubTitle             string    `json:"sub_title"`
+	Title                string    `json:"title"`
+}
+
+type EventResponse struct {
+	Event Event `json:"event"`
+	// deprecated
+	Markets []Market `json:"markets,omitempty"`
+}
+
+type GetEventParams struct {
+	EventTicker       string `json:"event_ticker"`
+	WithNestedMarkets bool   `json:"with_nested_markets"`
+}

@@ -162,3 +162,54 @@ func (c *Client) GetMarkets(params *GetMarketsParams) (MarketsResponse, error) {
 
 	return returnMarkets, nil
 }
+
+func (c *Client) GetEvent(params *GetEventParams) (Event, error) {
+	EVENT_PATH := "/trade-api/v2/events"
+	parsedUrl, err := url.Parse(EVENT_PATH)
+	if err != nil {
+		return Event{}, err
+	}
+
+	parsedUrl = parsedUrl.JoinPath(strings.ToUpper(params.EventTicker))
+
+	// query params from GetEventParams
+	q := parsedUrl.Query()
+
+	if params != nil {
+		if params.WithNestedMarkets {
+			q.Set("with_nested_markets", "true")
+		}
+	}
+
+	parsedUrl.RawQuery = q.Encode()
+
+	resp, err := c.makeRequest("GET", parsedUrl.String(), nil)
+
+	if err != nil {
+		return Event{}, err
+	}
+
+	defer resp.Body.Close()
+
+	s, err := io.ReadAll(resp.Body)
+
+	if resp.StatusCode != 200 {
+		return Event{}, &APIError{
+			StatusCode: resp.StatusCode,
+			Body:       string(s),
+		}
+	}
+
+	if err != nil {
+		return Event{}, err
+	}
+
+	var returnEvent EventResponse
+
+	err = json.Unmarshal(s, &returnEvent)
+	if err != nil {
+		return Event{}, err
+	}
+
+	return returnEvent.Event, nil
+}

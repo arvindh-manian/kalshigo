@@ -49,3 +49,18 @@ func TestGetMarkets(t *testing.T) {
 		t.Errorf("Expected cursor to be non-empty, got %v", m.Cursor)
 	}
 }
+
+func TestGetEvent(t *testing.T) {
+	e, err := kg.GetEvent(&GetEventParams{
+		EventTicker:       "KXSPEAKER",
+		WithNestedMarkets: true,
+	})
+
+	if err != nil {
+		t.Errorf("Error getting event: %v", err)
+	}
+
+	if e.EventTicker != "KXSPEAKER" {
+		t.Errorf("Expected ticker to be KXSPEAKER, got %v", e.EventTicker)
+	}
+}
