@@ -28,7 +28,7 @@ In general, any GET endpoint (series, market, etc) will have a corresponding Get
 | Section      | Support Status |
 | ------------ | -------------- |
 | market       | ✅             |
-| exchange     | ❌             |
+| exchange     | ✅             |
 | auth         | ❌             |
 | collection   | ❌             |
 | portfolio    | ❌             |
