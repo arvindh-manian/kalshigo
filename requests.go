@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"kalshigo/structs"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -25,7 +26,7 @@ func (c *Client) getRequest(path string, query url.Values) (body []byte, statusC
 	}
 
 	if resp.StatusCode != 200 {
-		return nil, resp.StatusCode, &APIError{
+		return nil, resp.StatusCode, &structs.APIError{
 			StatusCode: resp.StatusCode,
 			Body:       fmt.Sprintf("Error getting %s: %s", path, resp.Status),
 		}

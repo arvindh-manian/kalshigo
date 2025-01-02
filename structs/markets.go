@@ -1,39 +1,9 @@
-package kalshigo
+package structs
 
 import (
 	"encoding/json"
 	"time"
 )
-
-type APIError struct {
-	StatusCode int
-	Body       string
-}
-
-func (e *APIError) Error() string {
-	return e.Body
-}
-
-type Timestamp struct {
-	time.Time
-}
-
-func (t *Timestamp) UnmarshalJSON(b []byte) error {
-	var timestamp int64
-	err := json.Unmarshal(b, &timestamp)
-
-	if err != nil {
-		return err
-	}
-
-	t.Time = time.Unix(timestamp, 0)
-
-	return nil
-}
-
-func (t Timestamp) MarshalJSON() ([]byte, error) {
-	return json.Marshal(t.Unix())
-}
 
 type GetSeriesParams struct {
 	// SeriesTicker is the ticker of the series. This is a required field.
@@ -56,9 +26,28 @@ type GetMarketsParams struct {
 	MarketTickers     []string     `json:"tickers,omitempty"`
 }
 
-type GetMarketsResponse struct {
-	Markets []Market `json:"markets"`
-	Cursor  string   `json:"cursor,omitempty"`
+type GetEventParams struct {
+	EventTicker       string `json:"event_ticker"`
+	WithNestedMarkets bool   `json:"with_nested_markets"`
+}
+
+type GetEventsParams struct {
+	// This should be within the range of 1-200
+	Limit int64 `json:"limit,omitempty"`
+	// omit to get the first page
+	Cursor            string       `json:"cursor,omitempty"`
+	Status            MarketStatus `json:"status,omitempty"`
+	SeriesTicker      string       `json:"series_ticker,omitempty"`
+	WithNestedMarkets bool         `json:"with_nested_markets"`
+}
+
+type GetTradesParams struct {
+	Cursor string `json:"cursor,omitempty"`
+	// This should be within the range of 1-1000
+	Limit        int32     `json:"limit,omitempty"`
+	MarketTicker string    `json:"ticker,omitempty"`
+	MinTimestamp Timestamp `json:"min_ts,omitempty"`
+	MaxTimestamp Timestamp `json:"max_ts,omitempty"`
 }
 
 type MarketStatus string
@@ -154,11 +143,6 @@ type Market struct {
 	YesSubTitle             string            `json:"yes_sub_title"`
 }
 
-// JSON marshalling for Market
-type GetMarketResponse struct {
-	Market Market `json:"market"`
-}
-
 type SeriesCategory string
 
 const (
@@ -173,10 +157,6 @@ const (
 type SettlementSource struct {
 	Name string `json:"name"`
 	Url  string `json:"url"`
-}
-
-type GetSeriesResponse struct {
-	Series Series `json:"series"`
 }
 
 type Series struct {
@@ -203,41 +183,6 @@ type Event struct {
 	Title                string    `json:"title"`
 }
 
-type GetEventResponse struct {
-	Event Event `json:"event"`
-	// deprecated
-	Markets []Market `json:"markets,omitempty"`
-}
-
-type GetEventParams struct {
-	EventTicker       string `json:"event_ticker"`
-	WithNestedMarkets bool   `json:"with_nested_markets"`
-}
-
-type GetEventsParams struct {
-	// This should be within the range of 1-200
-	Limit int64 `json:"limit,omitempty"`
-	// omit to get the first page
-	Cursor            string       `json:"cursor,omitempty"`
-	Status            MarketStatus `json:"status,omitempty"`
-	SeriesTicker      string       `json:"series_ticker,omitempty"`
-	WithNestedMarkets bool         `json:"with_nested_markets"`
-}
-
-type GetEventsResponse struct {
-	Cursor string  `json:"cursor,omitempty"`
-	Events []Event `json:"events"`
-}
-
-type GetTradesParams struct {
-	Cursor string `json:"cursor,omitempty"`
-	// This should be within the range of 1-1000
-	Limit        int32     `json:"limit,omitempty"`
-	MarketTicker string    `json:"ticker,omitempty"`
-	MinTimestamp Timestamp `json:"min_ts,omitempty"`
-	MaxTimestamp Timestamp `json:"max_ts,omitempty"`
-}
-
 type TakerSideType string
 
 const (
@@ -256,19 +201,10 @@ type Trade struct {
 	YesPrice     int64         `json:"yes_price"`
 }
 
-type GetTradesResponse struct {
-	Cursor string  `json:"cursor,omitempty"`
-	Trades []Trade `json:"trades"`
-}
-
 type GetMarketOrderbookParams struct {
 	MarketTicker string `json:"ticker"`
 	// maximum number of orderbook price levels you want to see for either side
 	Depth int32 `json:"depth,omitempty"`
-}
-
-type GetMarketOrderbookResponse struct {
-	Orderbook MarketOrderbook `json:"orderbook"`
 }
 
 type MarketOrderbook struct {
@@ -361,69 +297,36 @@ type GetMarketCandlesticksResponse struct {
 	MarketTicker string              `json:"ticker"`
 }
 
-type GetExchangeAnnouncementsResponse struct {
-	Announcements []Announcement `json:"announcements"`
+type GetMarketsResponse struct {
+	Markets []Market `json:"markets"`
+	Cursor  string   `json:"cursor,omitempty"`
 }
 
-type AnnouncementStatus string
-
-const (
-	AnnouncementStatusInfo    AnnouncementStatus = "info"    // the docs call this AnnouncementTypeInfo
-	AnnouncementStatusWarning AnnouncementStatus = "warning" // the docs call this AnnouncementTypeWarning
-	AnnouncementStatusError   AnnouncementStatus = "error"   // the docs call this AnnouncementTypeError
-	AnnouncementStatusUnknown AnnouncementStatus = ""        // the docs call this AnnouncementTypeUnknown
-)
-
-type AnnouncementType string
-
-const (
-	AnnouncementTypeInfo    AnnouncementType = "info"
-	AnnouncementTypeWarning AnnouncementType = "warning"
-	AnnouncementTypeError   AnnouncementType = "error"
-	AnnouncementTypeUnknown AnnouncementType = ""
-)
-
-type Announcement struct {
-	DeliveryTime time.Time          `json:"delivery_time"`
-	Message      string             `json:"message"`
-	Status       AnnouncementStatus `json:"status"`
-	Type         AnnouncementType   `json:"type"`
+// JSON marshalling for Market
+type GetMarketResponse struct {
+	Market Market `json:"market"`
 }
 
-type GetExchangeScheduleResponse struct {
-	Schedule ExchangeSchedule `json:"schedule"`
+type GetSeriesResponse struct {
+	Series Series `json:"series"`
 }
 
-type ExchangeSchedule struct {
-	MaintenanceWindows []MaintenanceWindow `json:"maintenance_windows"`
-	StandardHours      []StandardHours     `json:"standard_hours"`
+type GetEventResponse struct {
+	Event Event `json:"event"`
+	// deprecated
+	Markets []Market `json:"markets,omitempty"`
 }
 
-type MaintenanceWindow struct {
-	EndDatetime   time.Time `json:"end_datetime"`
-	StartDatetime time.Time `json:"start_datetime"`
+type GetEventsResponse struct {
+	Cursor string  `json:"cursor,omitempty"`
+	Events []Event `json:"events"`
 }
 
-type OneDayHours struct {
-	CloseTime string `json:"close_time"`
-	OpenTime  string `json:"open_time"`
+type GetTradesResponse struct {
+	Cursor string  `json:"cursor,omitempty"`
+	Trades []Trade `json:"trades"`
 }
 
-type StandardHours struct {
-	StartTime time.Time `json:"start_time"`
-	EndTime   time.Time `json:"end_time"`
-	// Arrays are used because the time open is Union([midnight, 3 AM], [8 AM, midnight])
-	Monday    []OneDayHours `json:"monday"`
-	Tuesday   []OneDayHours `json:"tuesday"`
-	Wednesday []OneDayHours `json:"wednesday"`
-	Thursday  []OneDayHours `json:"thursday"`
-	Friday    []OneDayHours `json:"friday"`
-	Saturday  []OneDayHours `json:"saturday"`
-	Sunday    []OneDayHours `json:"sunday"`
-}
-
-type ExchangeStatus struct {
-	ExchangeActive              bool      `json:"exchange_active"`
-	ExchangeEstimatedResumeTime time.Time `json:"exchange_estimated_resume_time"`
-	TradingActive               bool      `json:"trading_active"`
+type GetMarketOrderbookResponse struct {
+	Orderbook MarketOrderbook `json:"orderbook"`
 }

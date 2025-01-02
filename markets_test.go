@@ -1,12 +1,13 @@
 package kalshigo
 
 import (
+	"kalshigo/structs"
 	"testing"
 	"time"
 )
 
 func TestGetSeries(t *testing.T) {
-	s, err := kg.GetSeries(&GetSeriesParams{
+	s, err := kg.GetSeries(&structs.GetSeriesParams{
 		SeriesTicker: "KXPAYROLLS",
 	})
 
@@ -20,7 +21,7 @@ func TestGetSeries(t *testing.T) {
 }
 
 func TestGetMarket(t *testing.T) {
-	m, err := kg.GetMarket(&GetMarketParams{
+	m, err := kg.GetMarket(&structs.GetMarketParams{
 		MarketTicker: "KXSBADS-25-B",
 	})
 
@@ -34,7 +35,7 @@ func TestGetMarket(t *testing.T) {
 }
 
 func TestGetMarkets(t *testing.T) {
-	m, err := kg.GetMarkets(&GetMarketsParams{
+	m, err := kg.GetMarkets(&structs.GetMarketsParams{
 		Limit: 10,
 	})
 
@@ -52,7 +53,7 @@ func TestGetMarkets(t *testing.T) {
 }
 
 func TestGetEvent(t *testing.T) {
-	e, err := kg.GetEvent(&GetEventParams{
+	e, err := kg.GetEvent(&structs.GetEventParams{
 		EventTicker:       "KXSPEAKER",
 		WithNestedMarkets: true,
 	})
@@ -67,7 +68,7 @@ func TestGetEvent(t *testing.T) {
 }
 
 func TestGetEvents(t *testing.T) {
-	e, err := kg.GetEvents(&GetEventsParams{
+	e, err := kg.GetEvents(&structs.GetEventsParams{
 		Limit: 10,
 	})
 
@@ -85,7 +86,7 @@ func TestGetEvents(t *testing.T) {
 }
 
 func TestGetTrades(t *testing.T) {
-	tt, err := kg.GetTrades(&GetTradesParams{
+	tt, err := kg.GetTrades(&structs.GetTradesParams{
 		Limit: 10,
 	})
 
@@ -103,7 +104,7 @@ func TestGetTrades(t *testing.T) {
 }
 
 func TestGetMarketOrderbook(t *testing.T) {
-	_, err := kg.GetMarketOrderbook(&GetMarketOrderbookParams{
+	_, err := kg.GetMarketOrderbook(&structs.GetMarketOrderbookParams{
 		MarketTicker: "KXSBADS-25-B",
 	})
 
@@ -116,12 +117,12 @@ func TestGetMarketCandlesticks(t *testing.T) {
 	startUnix := 1735187897
 	endUnix := 1735619897
 
-	c, err := kg.GetMarketCandlesticks(&GetMarketCandlesticksParams{
+	c, err := kg.GetMarketCandlesticks(&structs.GetMarketCandlesticksParams{
 		MarketTicker:   "KXUSTR-26DEC31-JG",
 		SeriesTicker:   "KXUSTR",
-		StartTimestamp: Timestamp{time.Unix(int64(startUnix), 0)},
-		EndTimestamp:   Timestamp{time.Unix(int64(endUnix), 0)},
-		PeriodInterval: PeriodIntervalHour,
+		StartTimestamp: structs.Timestamp{time.Unix(int64(startUnix), 0)},
+		EndTimestamp:   structs.Timestamp{time.Unix(int64(endUnix), 0)},
+		PeriodInterval: structs.PeriodIntervalHour,
 	})
 
 	if err != nil {

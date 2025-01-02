@@ -2,6 +2,7 @@ package kalshigo
 
 import (
 	"encoding/json"
+	"kalshigo/structs"
 	"net/url"
 	"strconv"
 	"strings"
@@ -15,10 +16,10 @@ const EVENT_PATH = "/trade-api/v2/events"
 
 const TRADE_PATH = "trade-api/v2/markets/trades"
 
-func (c *Client) GetSeries(params *GetSeriesParams) (*Series, error) {
+func (c *Client) GetSeries(params *structs.GetSeriesParams) (*structs.Series, error) {
 	parsedUrl, err := url.Parse(SERIES_PATH)
 	if err != nil {
-		return &Series{}, err
+		return &structs.Series{}, err
 	}
 
 	parsedUrl = parsedUrl.JoinPath(strings.ToUpper(params.SeriesTicker))
@@ -26,24 +27,24 @@ func (c *Client) GetSeries(params *GetSeriesParams) (*Series, error) {
 	body, _, err := c.getRequest(parsedUrl.String(), nil)
 
 	if err != nil {
-		return &Series{}, err
+		return &structs.Series{}, err
 	}
 
-	var returnSeries GetSeriesResponse
+	var returnSeries structs.GetSeriesResponse
 
 	err = json.Unmarshal(body, &returnSeries)
 
 	if err != nil {
-		return &Series{}, err
+		return &structs.Series{}, err
 	}
 
 	return &returnSeries.Series, nil
 }
 
-func (c *Client) GetMarket(params *GetMarketParams) (*Market, error) {
+func (c *Client) GetMarket(params *structs.GetMarketParams) (*structs.Market, error) {
 	parsedUrl, err := url.Parse(MARKET_PATH)
 	if err != nil {
-		return &Market{}, err
+		return &structs.Market{}, err
 	}
 
 	parsedUrl = parsedUrl.JoinPath(strings.ToUpper(params.MarketTicker))
@@ -51,21 +52,21 @@ func (c *Client) GetMarket(params *GetMarketParams) (*Market, error) {
 	body, _, err := c.getRequest(parsedUrl.String(), nil)
 
 	if err != nil {
-		return &Market{}, err
+		return &structs.Market{}, err
 	}
 
-	var returnMarket GetMarketResponse
+	var returnMarket structs.GetMarketResponse
 
 	err = json.Unmarshal(body, &returnMarket)
 
 	if err != nil {
-		return &Market{}, err
+		return &structs.Market{}, err
 	}
 
 	return &returnMarket.Market, nil
 }
 
-func (c *Client) GetMarkets(params *GetMarketsParams) (*GetMarketsResponse, error) {
+func (c *Client) GetMarkets(params *structs.GetMarketsParams) (*structs.GetMarketsResponse, error) {
 	q := url.Values{}
 
 	if params != nil {
@@ -106,25 +107,25 @@ func (c *Client) GetMarkets(params *GetMarketsParams) (*GetMarketsResponse, erro
 	body, _, err := c.getRequest(MARKET_PATH, q)
 
 	if err != nil {
-		return &GetMarketsResponse{}, err
+		return &structs.GetMarketsResponse{}, err
 	}
 
-	var returnMarkets GetMarketsResponse
+	var returnMarkets structs.GetMarketsResponse
 
 	err = json.Unmarshal(body, &returnMarkets)
 
 	if err != nil {
-		return &GetMarketsResponse{}, err
+		return &structs.GetMarketsResponse{}, err
 	}
 
 	return &returnMarkets, nil
 }
-func (c *Client) GetEvent(params *GetEventParams) (*Event, error) {
+func (c *Client) GetEvent(params *structs.GetEventParams) (*structs.Event, error) {
 
 	parsedUrl, err := url.Parse(EVENT_PATH)
 
 	if err != nil {
-		return &Event{}, err
+		return &structs.Event{}, err
 	}
 
 	var q = url.Values{}
@@ -140,21 +141,21 @@ func (c *Client) GetEvent(params *GetEventParams) (*Event, error) {
 	body, _, err := c.getRequest(parsedUrl.String(), q)
 
 	if err != nil {
-		return &Event{}, err
+		return &structs.Event{}, err
 	}
 
-	var returnEvent GetEventResponse
+	var returnEvent structs.GetEventResponse
 
 	err = json.Unmarshal(body, &returnEvent)
 
 	if err != nil {
-		return &Event{}, err
+		return &structs.Event{}, err
 	}
 
 	return &returnEvent.Event, nil
 }
 
-func (c *Client) GetEvents(params *GetEventsParams) (*GetEventsResponse, error) {
+func (c *Client) GetEvents(params *structs.GetEventsParams) (*structs.GetEventsResponse, error) {
 	q := url.Values{}
 
 	if params != nil {
@@ -182,21 +183,21 @@ func (c *Client) GetEvents(params *GetEventsParams) (*GetEventsResponse, error) 
 	body, _, err := c.getRequest(EVENT_PATH, q)
 
 	if err != nil {
-		return &GetEventsResponse{}, err
+		return &structs.GetEventsResponse{}, err
 	}
 
-	var returnEvents GetEventsResponse
+	var returnEvents structs.GetEventsResponse
 
 	err = json.Unmarshal(body, &returnEvents)
 
 	if err != nil {
-		return &GetEventsResponse{}, err
+		return &structs.GetEventsResponse{}, err
 	}
 
 	return &returnEvents, nil
 }
 
-func (c *Client) GetTrades(params *GetTradesParams) (*GetTradesResponse, error) {
+func (c *Client) GetTrades(params *structs.GetTradesParams) (*structs.GetTradesResponse, error) {
 	q := url.Values{}
 
 	if params != nil {
@@ -224,25 +225,25 @@ func (c *Client) GetTrades(params *GetTradesParams) (*GetTradesResponse, error) 
 	body, _, err := c.getRequest(TRADE_PATH, q)
 
 	if err != nil {
-		return &GetTradesResponse{}, err
+		return &structs.GetTradesResponse{}, err
 	}
 
-	var returnTrades GetTradesResponse
+	var returnTrades structs.GetTradesResponse
 
 	err = json.Unmarshal(body, &returnTrades)
 
 	if err != nil {
-		return &GetTradesResponse{}, err
+		return &structs.GetTradesResponse{}, err
 	}
 
 	return &returnTrades, nil
 }
 
-func (c *Client) GetMarketOrderbook(params *GetMarketOrderbookParams) (*MarketOrderbook, error) {
+func (c *Client) GetMarketOrderbook(params *structs.GetMarketOrderbookParams) (*structs.MarketOrderbook, error) {
 	parsedUrl, err := url.Parse(MARKET_PATH)
 
 	if err != nil {
-		return &MarketOrderbook{}, err
+		return &structs.MarketOrderbook{}, err
 	}
 
 	parsedUrl = parsedUrl.JoinPath(strings.ToUpper(params.MarketTicker), "orderbook")
@@ -256,21 +257,21 @@ func (c *Client) GetMarketOrderbook(params *GetMarketOrderbookParams) (*MarketOr
 	body, _, err := c.getRequest(parsedUrl.String(), q)
 
 	if err != nil {
-		return &MarketOrderbook{}, err
+		return &structs.MarketOrderbook{}, err
 	}
 
-	var returnOrderbook GetMarketOrderbookResponse
+	var returnOrderbook structs.GetMarketOrderbookResponse
 
 	err = json.Unmarshal(body, &returnOrderbook)
 
 	if err != nil {
-		return &MarketOrderbook{}, err
+		return &structs.MarketOrderbook{}, err
 	}
 
 	return &returnOrderbook.Orderbook, nil
 }
 
-func (c *Client) GetMarketCandlesticks(params *GetMarketCandlesticksParams) ([]MarketCandlestick, error) {
+func (c *Client) GetMarketCandlesticks(params *structs.GetMarketCandlesticksParams) ([]structs.MarketCandlestick, error) {
 	parsedUrl, err := url.Parse(SERIES_PATH)
 
 	if err != nil {
@@ -299,7 +300,7 @@ func (c *Client) GetMarketCandlesticks(params *GetMarketCandlesticksParams) ([]M
 		return nil, err
 	}
 
-	var returnCandlesticks GetMarketCandlesticksResponse
+	var returnCandlesticks structs.GetMarketCandlesticksResponse
 
 	err = json.Unmarshal(body, &returnCandlesticks)
 
