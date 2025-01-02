@@ -15,10 +15,10 @@ const EVENT_PATH = "/trade-api/v2/events"
 
 const TRADE_PATH = "trade-api/v2/markets/trades"
 
-func (c *Client) GetSeries(params *GetSeriesParams) (Series, error) {
+func (c *Client) GetSeries(params *GetSeriesParams) (*Series, error) {
 	parsedUrl, err := url.Parse(SERIES_PATH)
 	if err != nil {
-		return Series{}, err
+		return &Series{}, err
 	}
 
 	parsedUrl = parsedUrl.JoinPath(strings.ToUpper(params.SeriesTicker))
@@ -26,7 +26,7 @@ func (c *Client) GetSeries(params *GetSeriesParams) (Series, error) {
 	body, _, err := c.getRequest(parsedUrl.String(), nil)
 
 	if err != nil {
-		return Series{}, err
+		return &Series{}, err
 	}
 
 	var returnSeries GetSeriesResponse
@@ -34,16 +34,16 @@ func (c *Client) GetSeries(params *GetSeriesParams) (Series, error) {
 	err = json.Unmarshal(body, &returnSeries)
 
 	if err != nil {
-		return Series{}, err
+		return &Series{}, err
 	}
 
-	return returnSeries.Series, nil
+	return &returnSeries.Series, nil
 }
 
-func (c *Client) GetMarket(params *GetMarketParams) (Market, error) {
+func (c *Client) GetMarket(params *GetMarketParams) (*Market, error) {
 	parsedUrl, err := url.Parse(MARKET_PATH)
 	if err != nil {
-		return Market{}, err
+		return &Market{}, err
 	}
 
 	parsedUrl = parsedUrl.JoinPath(strings.ToUpper(params.MarketTicker))
@@ -51,7 +51,7 @@ func (c *Client) GetMarket(params *GetMarketParams) (Market, error) {
 	body, _, err := c.getRequest(parsedUrl.String(), nil)
 
 	if err != nil {
-		return Market{}, err
+		return &Market{}, err
 	}
 
 	var returnMarket GetMarketResponse
@@ -59,13 +59,13 @@ func (c *Client) GetMarket(params *GetMarketParams) (Market, error) {
 	err = json.Unmarshal(body, &returnMarket)
 
 	if err != nil {
-		return Market{}, err
+		return &Market{}, err
 	}
 
-	return returnMarket.Market, nil
+	return &returnMarket.Market, nil
 }
 
-func (c *Client) GetMarkets(params *GetMarketsParams) (GetMarketsResponse, error) {
+func (c *Client) GetMarkets(params *GetMarketsParams) (*GetMarketsResponse, error) {
 	q := url.Values{}
 
 	if params != nil {
@@ -106,7 +106,7 @@ func (c *Client) GetMarkets(params *GetMarketsParams) (GetMarketsResponse, error
 	body, _, err := c.getRequest(MARKET_PATH, q)
 
 	if err != nil {
-		return GetMarketsResponse{}, err
+		return &GetMarketsResponse{}, err
 	}
 
 	var returnMarkets GetMarketsResponse
@@ -114,17 +114,17 @@ func (c *Client) GetMarkets(params *GetMarketsParams) (GetMarketsResponse, error
 	err = json.Unmarshal(body, &returnMarkets)
 
 	if err != nil {
-		return GetMarketsResponse{}, err
+		return &GetMarketsResponse{}, err
 	}
 
-	return returnMarkets, nil
+	return &returnMarkets, nil
 }
-func (c *Client) GetEvent(params *GetEventParams) (Event, error) {
+func (c *Client) GetEvent(params *GetEventParams) (*Event, error) {
 
 	parsedUrl, err := url.Parse(EVENT_PATH)
 
 	if err != nil {
-		return Event{}, err
+		return &Event{}, err
 	}
 
 	var q = url.Values{}
@@ -140,7 +140,7 @@ func (c *Client) GetEvent(params *GetEventParams) (Event, error) {
 	body, _, err := c.getRequest(parsedUrl.String(), q)
 
 	if err != nil {
-		return Event{}, err
+		return &Event{}, err
 	}
 
 	var returnEvent GetEventResponse
@@ -148,13 +148,13 @@ func (c *Client) GetEvent(params *GetEventParams) (Event, error) {
 	err = json.Unmarshal(body, &returnEvent)
 
 	if err != nil {
-		return Event{}, err
+		return &Event{}, err
 	}
 
-	return returnEvent.Event, nil
+	return &returnEvent.Event, nil
 }
 
-func (c *Client) GetEvents(params *GetEventsParams) (GetEventsResponse, error) {
+func (c *Client) GetEvents(params *GetEventsParams) (*GetEventsResponse, error) {
 	q := url.Values{}
 
 	if params != nil {
@@ -182,7 +182,7 @@ func (c *Client) GetEvents(params *GetEventsParams) (GetEventsResponse, error) {
 	body, _, err := c.getRequest(EVENT_PATH, q)
 
 	if err != nil {
-		return GetEventsResponse{}, err
+		return &GetEventsResponse{}, err
 	}
 
 	var returnEvents GetEventsResponse
@@ -190,13 +190,13 @@ func (c *Client) GetEvents(params *GetEventsParams) (GetEventsResponse, error) {
 	err = json.Unmarshal(body, &returnEvents)
 
 	if err != nil {
-		return GetEventsResponse{}, err
+		return &GetEventsResponse{}, err
 	}
 
-	return returnEvents, nil
+	return &returnEvents, nil
 }
 
-func (c *Client) GetTrades(params *GetTradesParams) (GetTradesResponse, error) {
+func (c *Client) GetTrades(params *GetTradesParams) (*GetTradesResponse, error) {
 	q := url.Values{}
 
 	if params != nil {
@@ -224,7 +224,7 @@ func (c *Client) GetTrades(params *GetTradesParams) (GetTradesResponse, error) {
 	body, _, err := c.getRequest(TRADE_PATH, q)
 
 	if err != nil {
-		return GetTradesResponse{}, err
+		return &GetTradesResponse{}, err
 	}
 
 	var returnTrades GetTradesResponse
@@ -232,17 +232,17 @@ func (c *Client) GetTrades(params *GetTradesParams) (GetTradesResponse, error) {
 	err = json.Unmarshal(body, &returnTrades)
 
 	if err != nil {
-		return GetTradesResponse{}, err
+		return &GetTradesResponse{}, err
 	}
 
-	return returnTrades, nil
+	return &returnTrades, nil
 }
 
-func (c *Client) GetMarketOrderbook(params *GetMarketOrderbookParams) (MarketOrderbook, error) {
+func (c *Client) GetMarketOrderbook(params *GetMarketOrderbookParams) (*MarketOrderbook, error) {
 	parsedUrl, err := url.Parse(MARKET_PATH)
 
 	if err != nil {
-		return MarketOrderbook{}, err
+		return &MarketOrderbook{}, err
 	}
 
 	parsedUrl = parsedUrl.JoinPath(strings.ToUpper(params.MarketTicker), "orderbook")
@@ -256,7 +256,7 @@ func (c *Client) GetMarketOrderbook(params *GetMarketOrderbookParams) (MarketOrd
 	body, _, err := c.getRequest(parsedUrl.String(), q)
 
 	if err != nil {
-		return MarketOrderbook{}, err
+		return &MarketOrderbook{}, err
 	}
 
 	var returnOrderbook GetMarketOrderbookResponse
@@ -264,10 +264,10 @@ func (c *Client) GetMarketOrderbook(params *GetMarketOrderbookParams) (MarketOrd
 	err = json.Unmarshal(body, &returnOrderbook)
 
 	if err != nil {
-		return MarketOrderbook{}, err
+		return &MarketOrderbook{}, err
 	}
 
-	return returnOrderbook.Orderbook, nil
+	return &returnOrderbook.Orderbook, nil
 }
 
 func (c *Client) GetMarketCandlesticks(params *GetMarketCandlesticksParams) ([]MarketCandlestick, error) {
