@@ -13,7 +13,7 @@ const FILLS_ENDPOINT = "/trade-api/v2/portfolio/fills"
 const ORDERS_ENDPOINT = "/trade-api/v2/portfolio/orders"
 
 func (c *Client) GetBalance() (int, error) {
-	body, _, err := c.GetRequest(BALANCE_ENDPOINT, nil)
+	body, _, err := c.getRequest(BALANCE_ENDPOINT, nil)
 
 	if err != nil {
 		return 0, err
@@ -59,7 +59,7 @@ func (c *Client) GetFills(params *structs.GetFillsParams) (*structs.GetFillsResp
 		q.Add("order_id", params.OrderID)
 	}
 
-	body, _, err := c.GetRequest(FILLS_ENDPOINT, q)
+	body, _, err := c.getRequest(FILLS_ENDPOINT, q)
 
 	if err != nil {
 		return &structs.GetFillsResponse{}, err
@@ -103,7 +103,7 @@ func (c *Client) GetOrders(params *structs.GetOrdersParams) (*structs.GetOrdersR
 		q.Add("event_ticker", params.EventTicker)
 	}
 
-	body, _, err := c.GetRequest(ORDERS_ENDPOINT, q)
+	body, _, err := c.getRequest(ORDERS_ENDPOINT, q)
 
 	if err != nil {
 		return &structs.GetOrdersResponse{}, err
