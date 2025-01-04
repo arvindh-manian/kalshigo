@@ -2,7 +2,8 @@ package kalshigo
 
 import (
 	"encoding/json"
-	"kalshigo/structs"
+
+	"github.com/arvindh-manian/kalshigo/structs"
 )
 
 const ANNOUNCEMENT_ENDPOINT = "/trade-api/v2/exchange/announcements"

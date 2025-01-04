@@ -29,10 +29,12 @@ In general, any GET endpoint (series, market, etc) will have a corresponding Get
 | ------------ | -------------- |
 | market       | ✅             |
 | exchange     | ✅             |
-| auth         | ❌             |
+| auth [1]     | ✅             |
 | collection   | ❌             |
 | portfolio    | ❌             |
 | sockets      | ❌             |
+
+[1] The auth endpoint has been deprecated and replaced with API key-based authentication, which we support.
 
 # TODO:
 - Add features (first priority)
