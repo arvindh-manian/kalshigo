@@ -37,6 +37,8 @@ In general, any GET endpoint (series, market, etc) will have a corresponding Get
 [1] The auth endpoint has been deprecated and replaced with API key-based authentication, which we support.
 
 # TODO:
+- Test with canonical jsons to check accuracy of structs
+
 - Add features (first priority)
 
 - Add context support
