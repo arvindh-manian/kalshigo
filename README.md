@@ -2,6 +2,8 @@
 
 KalshiGo is a Go package providing low-level bindings to the Kalshi API. Inspired by [DiscordGo](https://github.com/bwmarrin/discordgo/tree/master). Add `kalshipulse` on Discord for support or discussions.
 
+This repository is currently **unstable**. Usage is not recommended until the v1.0 release.
+
 ## Usage
 
 ```golang
