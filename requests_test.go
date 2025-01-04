@@ -9,7 +9,7 @@ func Test_makeRequest(t *testing.T) {
 	method := "GET"
 	path := "/trade-api/v2/portfolio/balance"
 
-	fullUrl := kg.BaseURL.JoinPath(path)
+	fullUrl := kg.baseURL.JoinPath(path)
 
 	response, err := kg.makeRequest(method, fullUrl, nil)
 	if err != nil {

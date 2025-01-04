@@ -14,7 +14,7 @@ import (
 )
 
 func (c *Client) getRequest(path string, query url.Values) (body []byte, statusCode int, err error) {
-	fullUrl := c.BaseURL.JoinPath(path)
+	fullUrl := c.baseURL.JoinPath(path)
 
 	if query != nil {
 		fullUrl.RawQuery = query.Encode()
@@ -51,7 +51,7 @@ func (c *Client) makeRequest(method string, requestUrl *url.URL, payload interfa
 
 	msgString := timestampString + method + "/" + requestUrl.Path
 
-	signature, err := signPSS(c.PrivateKey, msgString)
+	signature, err := signPSS(c.privateKey, msgString)
 
 	if err != nil {
 		return nil, err
@@ -76,7 +76,7 @@ func (c *Client) makeRequest(method string, requestUrl *url.URL, payload interfa
 		return nil, err
 	}
 
-	req.Header.Set("KALSHI-ACCESS-KEY", c.AccessKey)
+	req.Header.Set("KALSHI-ACCESS-KEY", c.accessKey)
 	req.Header.Set("KALSHI-ACCESS-SIGNATURE", signature)
 	req.Header.Set("KALSHI-ACCESS-TIMESTAMP", timestampString)
 	req.Header.Set("Content-Type", "application/json")

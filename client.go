@@ -7,9 +7,9 @@ import (
 )
 
 type Client struct {
-	PrivateKey *rsa.PrivateKey
-	AccessKey  string
-	BaseURL    url.URL
+	privateKey *rsa.PrivateKey
+	accessKey  string
+	baseURL    url.URL
 	httpClient *http.Client
 }
 
@@ -21,9 +21,9 @@ func New(privateKey *rsa.PrivateKey, accessKey string, baseURL string) *Client {
 	}
 
 	return &Client{
-		PrivateKey: privateKey,
-		AccessKey:  accessKey,
-		BaseURL:    *parsedUrl,
+		privateKey: privateKey,
+		accessKey:  accessKey,
+		baseURL:    *parsedUrl,
 		httpClient: &http.Client{},
 	}
 }
