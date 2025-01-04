@@ -2,10 +2,11 @@ package kalshigo
 
 import (
 	"encoding/json"
-	"kalshigo/structs"
 	"net/url"
 	"strconv"
 	"strings"
+
+	"github.com/arvindh-manian/kalshigo/structs"
 )
 
 const MARKET_PATH = "/trade-api/v2/markets"

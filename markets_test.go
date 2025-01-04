@@ -1,9 +1,10 @@
 package kalshigo
 
 import (
-	"kalshigo/structs"
 	"testing"
 	"time"
+
+	"github.com/arvindh-manian/kalshigo/structs"
 )
 
 func TestGetSeries(t *testing.T) {

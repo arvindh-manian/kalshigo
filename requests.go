@@ -5,11 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"kalshigo/structs"
 	"net/http"
 	"net/url"
 	"strconv"
 	"time"
+
+	"github.com/arvindh-manian/kalshigo/structs"
 )
 
 func (c *Client) getRequest(path string, query url.Values) (body []byte, statusCode int, err error) {
