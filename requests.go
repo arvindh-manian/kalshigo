@@ -44,6 +44,39 @@ func (c *Client) getRequest(path string, query url.Values) (body []byte, statusC
 	return body, resp.StatusCode, nil
 }
 
+func (c *Client) postRequest(path string, payload interface{}) (body []byte, statusCode int, err error) {
+	fullUrl := c.baseURL.JoinPath(path)
+
+	resp, err := c.makeRequest("POST", fullUrl, payload)
+
+	if err != nil {
+		return nil, resp.StatusCode, err
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 && resp.StatusCode != 201 {
+		body, err = io.ReadAll(resp.Body)
+
+		if err != nil {
+			return nil, resp.StatusCode, err
+		}
+
+		return nil, resp.StatusCode, &structs.APIError{
+			StatusCode: resp.StatusCode,
+			Body:       string(body),
+		}
+	}
+
+	body, err = io.ReadAll(resp.Body)
+
+	if err != nil {
+		return nil, resp.StatusCode, err
+	}
+
+	return body, resp.StatusCode, nil
+}
+
 // this should only be used by internal functions
 // the base URL is added in other functions
 func (c *Client) makeRequest(method string, requestUrl *url.URL, payload interface{}) (*http.Response, error) {

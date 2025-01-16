@@ -119,3 +119,21 @@ func (c *Client) GetOrders(params *structs.GetOrdersParams) (*structs.GetOrdersR
 
 	return &returnOrders, nil
 }
+
+func (c *Client) CreateOrder(params *structs.CreateOrderParams) (*structs.CreateOrderResponse, error) {
+	body, _, err := c.postRequest(ORDERS_ENDPOINT, params)
+
+	if err != nil {
+		return &structs.CreateOrderResponse{}, err
+	}
+
+	var returnOrder structs.CreateOrderResponse
+
+	err = json.Unmarshal(body, &returnOrder)
+
+	if err != nil {
+		return &structs.CreateOrderResponse{}, err
+	}
+
+	return &returnOrder, nil
+}

@@ -1,9 +1,12 @@
 package kalshigo
 
 import (
+	"fmt"
 	"testing"
+	"time"
 
 	"github.com/arvindh-manian/kalshigo/structs"
+	"github.com/google/uuid"
 )
 
 func TestGetBalance(t *testing.T) {
@@ -45,4 +48,27 @@ func TestGetOrders(t *testing.T) {
 	if len(resp.Orders) == 0 {
 		t.Errorf("No orders returned. This may be intended: this behavior expected with a fresh account.")
 	}
+}
+
+func TestCreateOrder(t *testing.T) {
+	params := structs.CreateOrderParams{
+		Action:        structs.OrderActionBuy,
+		MarketTicker:  "EVSHARE-30JAN-50",
+		Count:         1,
+		ClientOrderID: uuid.New().String(),
+		PostOnly:      true,
+		Side:          structs.OrderSideYes,
+		Type:          structs.OrderTypeLimit,
+		YesPrice:      1,
+		ExpirationTimestamp: structs.Timestamp{
+			Time: time.Now().Add(time.Hour),
+		},
+	}
+
+	resp, err := kg.CreateOrder(&params)
+	if err != nil {
+		t.Errorf("Error creating order: %v", err)
+	}
+
+	fmt.Println(resp)
 }

@@ -34,3 +34,39 @@ func (t *Timestamp) UnmarshalJSON(b []byte) error {
 func (t Timestamp) MarshalJSON() ([]byte, error) {
 	return json.Marshal(t.Unix())
 }
+
+type OptionalTime struct {
+	time.Time
+}
+
+func (t *OptionalTime) UnmarshalJSON(b []byte) error {
+	var s string
+
+	err := json.Unmarshal(b, &s)
+
+	if err != nil {
+		return err
+	}
+
+	if s == "" {
+		return nil
+	}
+
+	v, err := time.Parse(time.RFC3339, s)
+
+	if err != nil {
+		return err
+	}
+
+	t.Time = v
+
+	return nil
+}
+
+func (t OptionalTime) MarshalJSON() ([]byte, error) {
+	if t.IsZero() {
+		return []byte(`""`), nil
+	}
+
+	return json.Marshal(t.Format(time.RFC3339))
+}
