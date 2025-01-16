@@ -1,7 +1,6 @@
 package kalshigo
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
@@ -52,17 +51,15 @@ func TestGetOrders(t *testing.T) {
 
 func TestCreateOrder(t *testing.T) {
 	params := structs.CreateOrderParams{
-		Action:        structs.OrderActionBuy,
-		MarketTicker:  "EVSHARE-30JAN-50",
-		Count:         1,
-		ClientOrderID: uuid.New().String(),
-		PostOnly:      true,
-		Side:          structs.OrderSideYes,
-		Type:          structs.OrderTypeLimit,
-		YesPrice:      1,
-		ExpirationTimestamp: structs.Timestamp{
-			Time: time.Now().Add(time.Hour),
-		},
+		Action:              structs.OrderActionBuy,
+		MarketTicker:        "EVSHARE-30JAN-50",
+		Count:               1,
+		ClientOrderID:       uuid.New().String(),
+		PostOnly:            true,
+		Side:                structs.OrderSideYes,
+		Type:                structs.OrderTypeLimit,
+		YesPrice:            1,
+		ExpirationTimestamp: &structs.Timestamp{time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
 	}
 
 	resp, err := kg.CreateOrder(&params)
@@ -70,5 +67,7 @@ func TestCreateOrder(t *testing.T) {
 		t.Errorf("Error creating order: %v", err)
 	}
 
-	fmt.Println(resp)
+	if resp.Order.Status != structs.OrderStatusCanceled {
+		t.Errorf("Order status is not canceled: %v", resp.Order.Status)
+	}
 }

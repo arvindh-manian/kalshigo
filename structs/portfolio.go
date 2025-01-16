@@ -125,7 +125,7 @@ type CreateOrderParams struct {
 	BuyMaxCost          int         `json:"buy_max_cost,omitempty"`
 	ClientOrderID       string      `json:"client_order_id"`
 	Count               int         `json:"count"`
-	ExpirationTimestamp Timestamp   `json:"expiration_ts,omitempty"`
+	ExpirationTimestamp *Timestamp  `json:"expiration_ts,omitempty"`
 	NoPrice             int         `json:"no_price,omitempty"`
 	PostOnly            bool        `json:"post_only,omitempty"`
 	SellPositionFloor   int         `json:"sell_position_floor,omitempty"`
