@@ -82,10 +82,10 @@ type GetOrdersResponse struct {
 }
 
 type OrderResponse struct {
-	// Action                    OrderAction   `json:"action"`
-	// AmendCount                int           `json:"amend_count,omitempty"`
-	// AmendTakerFillCount       int           `json:"amend_taker_fill_count,omitempty"`
-	// ClientOrderID             string        `json:"client_order_id"`
+	Action                    OrderAction   `json:"action"`
+	AmendCount                int           `json:"amend_count,omitempty"`
+	AmendTakerFillCount       int           `json:"amend_taker_fill_count,omitempty"`
+	ClientOrderID             string        `json:"client_order_id"`
 	CloseCancelCount          int           `json:"close_cancel_count,omitempty"`
 	CreatedTime               OptionalTime  `json:"created_time,omitempty"`
 	DecreaseCount             int           `json:"decrease_count,omitempty"`
